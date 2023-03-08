@@ -9,16 +9,15 @@ import okhttp3.Cookie
  */
 class CookieStore {
     companion object{
-        private var cookieEvent: CookieEvent? = null
+        private val cookieMap = HashMap<String,List<Cookie>>()
     }
 
-    private val cookieMap = HashMap<String,List<Cookie>>()
-    fun get(host:String): List<Cookie>? {
-        cookieEvent?.loadCookieEvent(host)
+    fun load(host:String): List<Cookie>? {
+        cookieEvent?.loadCookieEvent(host,cookieMap)
         return cookieMap[host]
     }
 
-    fun put(host: String,cookies: List<Cookie>){
+    fun save(host: String,cookies: List<Cookie>){
         cookieEvent?.saveCookieEvent(cookies, host)
         cookieMap[host] = cookies
     }
@@ -27,13 +26,14 @@ class CookieStore {
      * 设置cookie事件，这将覆盖原有的事件
      * @param event 实现[CookieEvent]
      */
+    private var cookieEvent: CookieEvent? = null
     fun setCookieEvent(event: CookieEvent){
         cookieEvent = event
     }
 
     interface CookieEvent{
         fun saveCookieEvent(cookies: List<Cookie>, host:String)
-        fun loadCookieEvent(host:String)
+        fun loadCookieEvent(host:String,cookieMap: HashMap<String,List<Cookie>>)
     }
 
 }

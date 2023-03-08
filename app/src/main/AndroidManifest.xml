@@ -26,6 +26,13 @@
         android:name="android.permission.BLUETOOTH_CONNECT"
         android:usesPermissionFlags="neverForLocation"
         tools:targetApi="s" />
+    <!--
+    This is not that important, it's just here so that we can query equalizer package
+    and check if it's present on A11+ because of Package visibility restrictions.
+    -->
+    <queries>
+        <package android:name="com.android.musicfx" />
+    </queries>
 
     <application
         android:name=".App"
@@ -41,6 +48,13 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity
+            android:name=".netease.activitys.LoginActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".activities.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
@@ -55,6 +69,7 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
@@ -142,7 +157,6 @@
                 <data android:mimeType="application/octet-stream" />
                 <data android:mimeType="application/x-zip-compressed" />
                 <data android:mimeType="application/zip" />
-
                 <data android:scheme="file" />
                 <data android:scheme="content" />
                 <data android:mimeType="*/*" />
@@ -163,16 +177,13 @@
                 <data android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.rmbak" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".appshortcuts.AppShortcutLauncherActivity"
             android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
         <activity
             android:name=".activities.saf.SAFGuideActivity"
             android:theme="@style/Theme.Intro" />
-
         <activity
             android:name=".activities.ErrorActivity"
             android:exported="true">
@@ -198,7 +209,6 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".appwidgets.BootReceiver"
             android:exported="true">
@@ -207,7 +217,6 @@
                 <action android:name="android.intent.action.QUICKBOOT_POWERON" />
             </intent-filter>
         </receiver>
-
         <receiver
             android:name=".appwidgets.AppWidgetBig"
             android:exported="true"
@@ -220,7 +229,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/app_widget_big_info" />
         </receiver>
-
         <receiver
             android:name=".appwidgets.AppWidgetClassic"
             android:exported="true"
@@ -308,12 +316,9 @@
         <meta-data
             android:name="android.max_aspect"
             android:value="2.1" />
-
         <meta-data
             android:name="com.lge.support.SPLIT_WINDOW"
-            android:value="true" />
-
-        <!-- Android Auto -->
+            android:value="true" /> <!-- Android Auto -->
         <meta-data
             android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
@@ -325,11 +330,4 @@
             android:resource="@drawable/ic_notification" />
     </application>
 
-    <!--
-    This is not that important, it's just here so that we can query equalizer package
-    and check if it's present on A11+ because of Package visibility restrictions.
-    -->
-    <queries>
-        <package android:name="com.android.musicfx" />
-    </queries>
 </manifest>

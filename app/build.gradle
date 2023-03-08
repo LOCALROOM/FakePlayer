@@ -8,6 +8,10 @@ android {
     compileSdk 32
     namespace "code.name.monkey.retromusic"
 
+    dataBinding {
+        enabled = true
+    }
+
     defaultConfig {
         minSdk 21
         targetSdk 32

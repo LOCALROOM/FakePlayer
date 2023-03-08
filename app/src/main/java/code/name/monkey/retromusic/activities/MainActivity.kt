@@ -29,6 +29,7 @@ import code.name.monkey.retromusic.helper.SearchQueryHelper.getSongs
 import code.name.monkey.retromusic.interfaces.IScrollHelper
 import code.name.monkey.retromusic.model.CategoryInfo
 import code.name.monkey.retromusic.model.Song
+import code.name.monkey.retromusic.netease.activitys.LoginActivity
 import code.name.monkey.retromusic.repository.PlaylistSongsLoader
 import code.name.monkey.retromusic.service.MusicService
 import code.name.monkey.retromusic.util.AppRater
@@ -46,6 +47,10 @@ class MainActivity : AbsCastActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val intent = Intent(this,LoginActivity::class.java)
+        startActivity(intent)
+
         setTaskDescriptionColorAuto()
         hideStatusBar()
         updateTabs()

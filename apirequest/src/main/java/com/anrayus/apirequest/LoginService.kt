@@ -5,32 +5,30 @@ import com.anrayus.apirequest.model.QRCode
 import com.anrayus.apirequest.model.QRCodeInfo
 import com.anrayus.apirequest.model.QRCodeStatusInfo
 import com.google.gson.Gson
+import kotlinx.coroutines.*
 
 /**
  * @param loginStatus 使用者定义的状态事件
  *
  */
-class LoginService(private val loginStatus: LoginStatus): BaseService(){
-
+open class LoginService: BaseService(){
     private var key:String? = null
-    override val BASE_URL: String = "${super.BASE_URL}/login"
-
     /**
      * 获取登录的二维码
      *
      */
-    fun getQRCode(): QRCodeInfo? {
+    fun getQRCode(loginStatusEvent : LoginStatusEvent): QRCodeInfo? {
         key = getKey()
         return if (key!=null) {
             val param = Pair("qrimg","true")
-            val qrcodeStation = request("/qr/create",key,param)
+            val qrcodeStation = request("/login/qr/create",key,param)
             val qrCode = Gson().fromJson(qrcodeStation
                 ,
                 QRCode::class.java
             )
             return if (qrCode.code == 200) {
-                loginStatus.checkLoginStatus(key!!)//开启状态检查
-                return qrCode.data
+                loginStatusEvent.checkLoginStatus(key!!)//开启状态检查
+                qrCode.data
 
             }else{
                 null
@@ -42,7 +40,7 @@ class LoginService(private val loginStatus: LoginStatus): BaseService(){
     }
 
     private fun getKey():String?{
-        val res = request("/qr/key",null)
+        val res = request("/login/qr/key",null)
         val key = Gson().fromJson(res, Key::class.java)
         return if (key.code==200){
             key.data.unikey
@@ -54,22 +52,38 @@ class LoginService(private val loginStatus: LoginStatus): BaseService(){
 
     /**
      * 使用抽象类，为用户自定义状态事件留下接口
-     * 必须重写[LoginStatus.loginStatusChangeEvent]
+     * 必须重写[LoginStatusEvent.loginStatusChangeEvent]
      */
-    abstract class LoginStatus: BaseService(){
-        override val BASE_URL: String = "${super.BASE_URL}/login"
+    abstract class LoginStatusEvent: LoginService(){
+        companion object{
+            const val COMPLETE = 803
+            const val WAIT_LOGIN = 801
+            const val LOGGING = 802
+        }
         abstract fun loginStatusChangeEvent(status:Int)//使用者需重写该方法以定义状态事件
         fun checkLoginStatus(key:String){
-            var status = 801
-            while (true){
-                val codeStatus = Gson().fromJson(request("/qr/check",key), QRCodeStatusInfo::class.java)
-                status = codeStatus.code
-                loginStatusChangeEvent(status)
-                if (status==803){
-                    return//登录完成 退出
+            CoroutineScope(Dispatchers.IO).launch {
+                var status = WAIT_LOGIN
+                while (true) {
+                    val codeStatus = Gson().fromJson(
+                        request("/login/qr/check", key),
+                        QRCodeStatusInfo::class.java
+                    )
+                    status = codeStatus.code
+                    loginStatusChangeEvent(status)
+                    when (status) {
+                        WAIT_LOGIN -> {
+                            delay(1000)
+                        }
+                        LOGGING -> {
+                            delay(500)
+                        }
+                    }
+                    if (status == COMPLETE) {
+                        cancel()
+                    }
                 }
             }
-
         }
     }
 

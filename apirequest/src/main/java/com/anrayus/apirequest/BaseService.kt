@@ -4,8 +4,7 @@ import com.anrayus.apirequest.store.CookieStore
 import com.google.gson.Gson
 import okhttp3.*
 
-abstract class BaseService {
-    open val BASE_URL = RequestManager.baseUrl//Test
+open class BaseService {
 
     private val client = OkHttpClient().newBuilder()
     val cookieStore = CookieStore()
@@ -13,11 +12,11 @@ abstract class BaseService {
     init {
         client.cookieJar(object : CookieJar {
             override fun loadForRequest(url: HttpUrl): List<Cookie> {
-                return cookieStore.get(url.host) ?: emptyList()
+                return cookieStore.load(url.host) ?: emptyList()
             }
 
             override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-                cookieStore.put(url.host,cookies)
+                cookieStore.save(url.host,cookies)
             }
 
         })
@@ -29,9 +28,9 @@ abstract class BaseService {
      * @param cookie 请求头cookie def=null
      * @param params 请求附带参数
      */
-    fun request(requestUrl:String,key:String?,vararg params:Pair<String,String>):String?{
+    fun request(requestUrl:String,key:String?,vararg params:Pair<String,String>):String{
         val url = StringBuffer()
-        url.append("$BASE_URL$requestUrl?timestamp=${System.currentTimeMillis()}")
+        url.append("${RequestManager.getBaseUrl()}${requestUrl}?timestamp=${System.currentTimeMillis()}")
 
         params.forEach{
             url.append("&${it.first}=${it.second}")
@@ -45,6 +44,6 @@ abstract class BaseService {
         }.build()
 
 
-        return client.build().newCall(request).execute().body?.string()
+        return client.build().newCall(request).execute().body.string()
     }
 }
