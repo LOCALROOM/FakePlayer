@@ -3,9 +3,9 @@ package code.name.monkey.retromusic.netease.model
 import code.name.monkey.retromusic.netease.NeteasePreference.PREFERENCE_COOKIE
 import code.name.monkey.retromusic.netease.NeteasePreference.loadStringInStorage
 import code.name.monkey.retromusic.netease.NeteasePreference.saveInStorage
-import com.anrayus.apirequest.LoginService
-import com.anrayus.apirequest.model.AccountInfo
-import com.anrayus.apirequest.store.CookieStore
+import com.anranyus.apirequest.LoginService
+import com.anranyus.apirequest.model.AccountInfo
+import com.anranyus.apirequest.store.CookieStore
 import kotlinx.coroutines.*
 
 class UserModel:BaseModel {
@@ -30,7 +30,7 @@ class UserModel:BaseModel {
         })
     }
 
-    suspend fun getLoginQRCode(loginStatusEvent: LoginService.LoginStatusEvent,callback:(String?) -> Unit){
+    suspend fun getLoginQRCode(loginStatusEvent: LoginService.LoginStatusEvent, callback:(String?) -> Unit){
         val data = scope.async {
             manager.getLoginQRCode(loginStatusEvent)?.qrimg
         }

@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import code.name.monkey.retromusic.netease.model.UserModel
-import com.anrayus.apirequest.LoginService
-import com.anrayus.apirequest.model.AccountInfo
+import com.anranyus.apirequest.LoginService
+import com.anranyus.apirequest.model.AccountInfo
 
 class LoginViewModel :ViewModel(){
     private val userModel = UserModel()

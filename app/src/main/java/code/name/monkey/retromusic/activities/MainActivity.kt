@@ -41,9 +41,9 @@ import code.name.monkey.retromusic.service.MusicService
 import code.name.monkey.retromusic.util.AppRater
 import code.name.monkey.retromusic.util.PreferenceUtil
 import code.name.monkey.retromusic.util.logE
-import com.anrayus.apirequest.RequestManager
-import com.anrayus.apirequest.model.AccountInfo
-import com.anrayus.apirequest.store.CookieStore
+import com.anranyus.apirequest.RequestManager
+import com.anranyus.apirequest.model.AccountInfo
+import com.anranyus.apirequest.store.CookieStore
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO

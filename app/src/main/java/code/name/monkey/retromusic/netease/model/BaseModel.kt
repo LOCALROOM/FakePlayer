@@ -1,8 +1,8 @@
 package code.name.monkey.retromusic.netease.model
 
 import code.name.monkey.retromusic.netease.NeteasePreference
-import com.anrayus.apirequest.RequestManager
-import com.anrayus.apirequest.store.CookieStore
+import com.anranyus.apirequest.RequestManager
+import com.anranyus.apirequest.store.CookieStore
 
 interface BaseModel {
     val manager: RequestManager

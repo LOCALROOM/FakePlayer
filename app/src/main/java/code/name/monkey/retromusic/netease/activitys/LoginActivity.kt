@@ -1,28 +1,20 @@
 package code.name.monkey.retromusic.netease.activitys
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
-import android.util.Log
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import code.name.monkey.retromusic.R
 import code.name.monkey.retromusic.activities.MainActivity
-import code.name.monkey.retromusic.databinding.ActivityLoginBinding
 import code.name.monkey.retromusic.netease.viewmodel.LoginViewModel
-import com.anrayus.apirequest.LoginService
-import com.anrayus.apirequest.store.CookieStore
-import com.bumptech.glide.Glide
+import com.anranyus.apirequest.LoginService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import okhttp3.Cookie
 
 
 class LoginActivity : AppCompatActivity() {
