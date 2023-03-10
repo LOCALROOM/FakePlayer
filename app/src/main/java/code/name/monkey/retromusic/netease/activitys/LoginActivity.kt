@@ -40,8 +40,14 @@ class LoginActivity : AppCompatActivity() {
                 override fun loginStatusChangeEvent(status: Int) {
                     when(status){
                         COMPLETE -> {
-                            val intent = Intent(this@LoginActivity,MainActivity::class.java)
-                            startActivity(intent)
+                            scope.launch(Dispatchers.Main) {
+                                viewModel.getUserInfo()
+                                viewModel.getUser.observe(this@LoginActivity){ user ->
+                                    if (user!=null){
+                                        MainActivity.callBackToMainActivity(this@LoginActivity,user)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -50,7 +56,6 @@ class LoginActivity : AppCompatActivity() {
         }
 
         viewModel.getQRCodeResult.observe(this) { code ->
-            Log.e(this::class.simpleName,code.toString())
             val bitmap =  base64ToBitmap(code)
             val qrimg = findViewById<ImageView>(R.id.qrimg)
             qrimg.setImageBitmap(bitmap)

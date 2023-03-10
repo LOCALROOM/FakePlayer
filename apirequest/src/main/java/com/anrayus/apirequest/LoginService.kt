@@ -1,9 +1,7 @@
 package com.anrayus.apirequest
 
-import com.anrayus.apirequest.model.Key
-import com.anrayus.apirequest.model.QRCode
-import com.anrayus.apirequest.model.QRCodeInfo
-import com.anrayus.apirequest.model.QRCodeStatusInfo
+import com.anrayus.apirequest.model.*
+import com.anrayus.apirequest.store.CookieStore
 import com.google.gson.Gson
 import kotlinx.coroutines.*
 
@@ -80,7 +78,9 @@ open class LoginService: BaseService(){
                         }
                     }
                     if (status == COMPLETE) {
-                        cancel()
+                        //保存Cookie
+                        CookieStore.save(RequestManager.getHost(),codeStatus.cookie)
+                        return@launch
                     }
                 }
             }

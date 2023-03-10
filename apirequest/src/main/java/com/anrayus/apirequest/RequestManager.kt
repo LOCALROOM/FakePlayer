@@ -6,14 +6,18 @@ import com.anrayus.apirequest.model.QRCodeInfo
 
 class RequestManager {
     companion object{
-        private var BASE_URL = ""
+        private var HOST = ""
+        private var PORT = ""
 
-        fun build(url:String):RequestManager{
-            BASE_URL = url
+        fun build(host:String,port:String):RequestManager{
+            HOST = host
+            PORT = port
             return RequestManager()
         }
 
-        fun getBaseUrl() = BASE_URL
+        fun getBaseUrl() = "$HOST:$PORT"
+        fun getHost() = HOST
+        fun getPort() = PORT
 
     }
 
@@ -23,7 +27,7 @@ class RequestManager {
         return loginService.getQRCode(loginStatusEvent)
     }
     fun setCookieEvent(cookieEvent: CookieStore.CookieEvent){
-        loginService.cookieStore.setCookieEvent(cookieEvent)
+        CookieStore.setCookieEvent(cookieEvent)
     }
     /*************PlaylistService*************/
     private val playlistService = PlaylistService()

@@ -6,21 +6,8 @@ import okhttp3.*
 
 open class BaseService {
 
-    private val client = OkHttpClient().newBuilder()
-    val cookieStore = CookieStore()
     protected val gson = Gson()
-    init {
-        client.cookieJar(object : CookieJar {
-            override fun loadForRequest(url: HttpUrl): List<Cookie> {
-                return cookieStore.load(url.host) ?: emptyList()
-            }
-
-            override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-                cookieStore.save(url.host,cookies)
-            }
-
-        })
-    }
+    private val client = OkHttpClient()
 
     /**
      * @param requestUrl 请求Api地址
@@ -40,10 +27,14 @@ open class BaseService {
             url.append("&key=${key}")
         }
         val request = Request.Builder().apply {
+            val cookie = CookieStore.load(RequestManager.getHost())
+            println(cookie)
+            if (cookie!=null){
+                addHeader("cookie", cookie)
+            }
             url(url.toString())
         }.build()
 
-
-        return client.build().newCall(request).execute().body.string()
+        return client.newCall(request).execute().body.string()
     }
 }

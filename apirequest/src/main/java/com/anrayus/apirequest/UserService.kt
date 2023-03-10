@@ -13,7 +13,7 @@ class UserService: BaseService() {
      *其中最重要的是获得用户ID
      */
     fun getAccountInfo(): AccountInfo {
-        return  gson.fromJson(request("/user/account",null), Account::class.java).accountInfo
+        return  gson.fromJson(request("/user/account",null), Account::class.java).account
     }
 
 

@@ -14,10 +14,13 @@
  */
 package code.name.monkey.retromusic.activities
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.contains
 import androidx.navigation.ui.setupWithNavController
@@ -29,27 +32,46 @@ import code.name.monkey.retromusic.helper.SearchQueryHelper.getSongs
 import code.name.monkey.retromusic.interfaces.IScrollHelper
 import code.name.monkey.retromusic.model.CategoryInfo
 import code.name.monkey.retromusic.model.Song
+import code.name.monkey.retromusic.netease.NeteasePreference.PREFERENCE_COOKIE
+import code.name.monkey.retromusic.netease.NeteasePreference.loadStringInStorage
 import code.name.monkey.retromusic.netease.activitys.LoginActivity
+import code.name.monkey.retromusic.netease.viewmodel.MainViewModel
 import code.name.monkey.retromusic.repository.PlaylistSongsLoader
 import code.name.monkey.retromusic.service.MusicService
 import code.name.monkey.retromusic.util.AppRater
 import code.name.monkey.retromusic.util.PreferenceUtil
 import code.name.monkey.retromusic.util.logE
+import com.anrayus.apirequest.RequestManager
+import com.anrayus.apirequest.model.AccountInfo
+import com.anrayus.apirequest.store.CookieStore
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.get
+
 
 class MainActivity : AbsCastActivity() {
     companion object {
         const val TAG = "MainActivity"
         const val EXPAND_PANEL = "expand_panel"
+
+        fun callBackToMainActivity(context: Context, mUser:AccountInfo){
+            val intent = Intent(context,MainActivity::class.java)
+            val json = Gson().toJson(mUser)
+            intent.putExtra("user",json)
+            context.startActivity(intent)
+        }
     }
+
+    private lateinit var viewModel:MainViewModel
+    var user:AccountInfo? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val intent = Intent(this,LoginActivity::class.java)
-        startActivity(intent)
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
         setTaskDescriptionColorAuto()
         hideStatusBar()
@@ -59,6 +81,12 @@ class MainActivity : AbsCastActivity() {
         setupNavigationController()
 
         WhatsNewFragment.showChangeLog(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        user = Gson().fromJson(intent.getStringExtra("user"),AccountInfo::class.java)
+        loginCheck()
     }
 
     private fun setupNavigationController() {
@@ -217,5 +245,29 @@ class MainActivity : AbsCastActivity() {
             }
         }
         return id
+    }
+
+    fun loginCheck(){
+        if (loadStringInStorage(PREFERENCE_COOKIE)==null){
+            val intent = Intent(this,LoginActivity::class.java)
+            startActivity(intent)
+        }
+
+        CoroutineScope(Main).launch{
+//            viewModel.login()
+            viewModel.getUserInfo()
+            Log.e(TAG,"Now cookie is ${CookieStore.load(RequestManager.getHost())}")
+        }
+
+        viewModel.getUser.observe(this) { newUser ->
+            if (newUser == null) {
+                //无该用户
+                Log.e(TAG,"user is null")
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+            } else {
+                //TODO 加载用户信息
+            }
+        }
     }
 }
